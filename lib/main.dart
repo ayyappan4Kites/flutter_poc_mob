@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter_poc_mob/service/location_service_client.dart';
+import 'package:flutter_poc_mob/services/driver_service_client.dart';
+import 'package:flutter_poc_mob/services/location_service_client.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ import 'package:geolocator_android/geolocator_android.dart';
 void main() {
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -62,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
-      // accessing the position and request users of the 
+      // accessing the position and request users of the
       // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
@@ -73,36 +75,37 @@ class _MyHomePageState extends State<MyHomePage> {
       if (permission == LocationPermission.denied) {
         // Permissions are denied, next time you could try
         // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale 
+        // Android's shouldShowRequestPermissionRationale
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately. 
+      // Permissions are denied forever, handle appropriately.
       return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
-    } 
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
 
-  
-  void getDriverLocation() async{
+  void getDriverLocation() async {
     var position = await _determinePosition();
     print(position);
   }
-  @override initState(){
+
+  @override
+  initState() {
     getDriverLocation();
     super.initState();
   }
 
   void _incrementCounter() {
-    LocationService();
+    driver_service_client().getDriverLoads();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
